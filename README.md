@@ -19,7 +19,7 @@ npx hardhat verify --network <BLOCKCHAIN> <DEPLOYED_CONTRACT_ADDRESS> <ARGUMENTS
 
 ## Deployed Contracts
 
-BurningZombiesERC721: `TBA`
-BurningZombiesMarket: `TBA`
-NeonMonsters: `0x1b72CFde16E5a33a36eAAFbf2eb9CDEd02B09577`
-NeonMonstersMinters: `0x86796ff038D063a216D92167e53bA447E9Ce3C51`
+- BurningZombiesERC721: `TBA`
+- BurningZombiesMarket: `TBA`
+- NeonMonsters: `0x1b72CFde16E5a33a36eAAFbf2eb9CDEd02B09577`
+- NeonMonstersMinters: `0x86796ff038D063a216D92167e53bA447E9Ce3C51`
