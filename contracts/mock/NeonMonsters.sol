@@ -18,5 +18,18 @@ contract NeonMonsters is ERC721 {
         _safeMint(_msgSender(), 9);
         _safeMint(_msgSender(), 10);
         _safeMint(_msgSender(), 11);
+        _safeMint(_msgSender(), 12);
+        _safeMint(_msgSender(), 13);
+        _safeMint(_msgSender(), 14);
+        _safeMint(_msgSender(), 15);
+        _safeMint(_msgSender(), 16);
+        _safeMint(_msgSender(), 17);
+        _safeMint(_msgSender(), 18);
+        _safeMint(_msgSender(), 19);
+        _safeMint(_msgSender(), 20);
+        _safeMint(_msgSender(), 21);
+        _safeMint(_msgSender(), 22);
+        _safeMint(_msgSender(), 23);
+        _safeMint(_msgSender(), 24);
     }
 }

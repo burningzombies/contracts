@@ -161,9 +161,9 @@ contract BurningZombiesERC721 is
 
         if (segmentNo == 0)
             return
-                balanceOf(sender) == 0 &&
-                    _neonMonstersMintersContract.isMinter(sender) &&
-                    _neonMonstersContract.balanceOf(sender) >= 5
+                balanceOf(sender) <
+                    (uint256(_neonMonstersContract.balanceOf(sender)) / 10) &&
+                    _neonMonstersMintersContract.isMinter(sender)
                     ? price / 10
                     : price;
 

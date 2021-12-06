@@ -90,6 +90,8 @@ describe("Burning Zombies", function () {
 
     const splitterBalance = await ethers.provider.getBalance(splitter.address);
     expect(splitterBalance.toString()).to.be.equal("105000000000000000");
+
+    await contract.mintTokens(1, { value: "150000000000000000" });
     await expect(contract.mintTokens(1, { value: "150000000000000000" })).to.be
       .reverted;
   });
