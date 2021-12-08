@@ -97,19 +97,29 @@ describe("Burning Zombies", function () {
   });
 
   it("Should discount for nemo holders", async () => {
-    for (let i = 0; i < 250; i++) {
+    for (let i = 0; i < 100; i++) {
       await contract
         .connect(addrs[1])
         .mintTokens(1, { value: "1500000000000000000" });
       process.stdout.write(`\r    > Mint index: ${i}`);
     }
-    console.log("");
-
-    for (let i = 0; i < 86; i++) {
+    for (let i = 0; i < 100; i++) {
       await contract
         .connect(addrs[2])
         .mintTokens(1, { value: "1500000000000000000" });
       process.stdout.write(`\r    > Mint index/2: ${i}`);
+    }
+    for (let i = 0; i < 100; i++) {
+      await contract
+        .connect(addrs[3])
+        .mintTokens(1, { value: "1500000000000000000" });
+      process.stdout.write(`\r    > Mint index/3: ${i}`);
+    }
+    for (let i = 0; i < 100; i++) {
+      await contract
+        .connect(addrs[4])
+        .mintTokens(1, { value: "1500000000000000000" });
+      process.stdout.write(`\r    > Mint index/4: ${i}`);
     }
     console.log("");
     await contract.mintTokens(1, { value: "750000000000000000" });
@@ -132,7 +142,7 @@ describe("Burning Zombies", function () {
 
     let i = 0;
     while (true) {
-      const addrsIndex: number = parseInt((i / 250).toString());
+      const addrsIndex: number = parseInt((i / 100).toString());
 
       try {
         await contract.connect(addrs[addrsIndex]).mintTokens(1, {
@@ -160,7 +170,7 @@ describe("Burning Zombies", function () {
 
     i = 0;
     while (true) {
-      const addrsIndex: number = parseInt((i / 250).toString());
+      const addrsIndex: number = parseInt((i / 100).toString());
 
       if (i === 1)
         await expect(
@@ -188,7 +198,7 @@ describe("Burning Zombies", function () {
       .connect(addrs[0])
       .transferFrom(
         await addrs[0].getAddress(),
-        await addrs[9].getAddress(),
+        await addrs[16].getAddress(),
         1
       );
 

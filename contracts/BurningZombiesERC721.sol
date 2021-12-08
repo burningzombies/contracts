@@ -22,7 +22,7 @@ contract BurningZombiesERC721 is
 
     uint256 public constant MAX_SUPPLY = 3024;
     uint256 public constant MAX_TOKEN_PER_TX = 24;
-    uint256 public constant MAX_TOKEN_PER_WALLET = 250;
+    uint256 public constant MAX_TOKEN_PER_WALLET = 100;
 
     uint256 public segmentSize;
     uint256 public reflectionBase;
