@@ -107,7 +107,7 @@ contract BurningZombiesERC721 is
         address from,
         address to,
         uint256 tokenId
-    ) internal override(ERC721, ERC721Enumerable) {
+    ) internal virtual override(ERC721, ERC721Enumerable) {
         if (to == address(0)) {
             claimReward(tokenId);
 
