@@ -1,5 +1,7 @@
 # Burning Zombies Contracts
 
+**(EXPERIMENTAL) Use at your own risk.**
+
 This repo contains all of the smart contracts used to run Burning Zombies.
 
 Try running some of the following tasks:
