@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0
-
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -14,8 +13,8 @@ import "./INeonMonstersMinters.sol";
 
 contract BurningZombiesERC721 is
     ERC721,
-    ERC721Burnable,
     ERC721Enumerable,
+    ERC721Burnable,
     Ownable,
     ReentrancyGuard
 {
@@ -41,7 +40,7 @@ contract BurningZombiesERC721 is
     uint256 public burnedReflectionBalance;
 
     string private _baseURIextended;
-    Counters.Counter private _tokenIdTracker;
+    Counters.Counter private _tokenIdCounter;
     address private _splitter;
 
     IERC721 private _neonMonstersContract;
@@ -79,7 +78,7 @@ contract BurningZombiesERC721 is
         uint256 priceStep_
     ) public onlyOwner {
         require(
-            _tokenIdTracker.current() == 0,
+            _tokenIdCounter.current() == 0,
             "BurningZombiesERC721: first token already minted"
         );
         segmentSize = segmentSize_;
@@ -179,7 +178,7 @@ contract BurningZombiesERC721 is
     }
 
     function currentTokenPrice() public view returns (uint256) {
-        return _tokenPrice(_tokenIdTracker.current());
+        return _tokenPrice(_tokenIdCounter.current());
     }
 
     function tokenPrice(uint256 tokenId) public view returns (uint256) {
@@ -202,7 +201,7 @@ contract BurningZombiesERC721 is
         return
             block.timestamp >= saleStartsAt &&
             block.timestamp <= (saleStartsAt + saleDuration) &&
-            _tokenIdTracker.current() < MAX_SUPPLY;
+            _tokenIdCounter.current() < MAX_SUPPLY;
     }
 
     function minterOf(uint256 tokenId) public view returns (address) {
@@ -214,7 +213,7 @@ contract BurningZombiesERC721 is
     }
 
     function currentTokenId() public view returns (uint256) {
-        return _tokenIdTracker.current();
+        return _tokenIdCounter.current();
     }
 
     function mintTokens(uint256 numberOfTokens) public payable {
@@ -226,13 +225,13 @@ contract BurningZombiesERC721 is
         );
 
         require(
-            _tokenIdTracker.current() + numberOfTokens <= MAX_SUPPLY,
+            _tokenIdCounter.current() + numberOfTokens <= MAX_SUPPLY,
             "BurningZombiesERC721: purchase exceeds max supply of tokens"
         );
 
         uint256 amountToPay;
         for (uint256 i = 0; numberOfTokens > i; i++) {
-            amountToPay += _tokenPrice(_tokenIdTracker.current() + i);
+            amountToPay += _tokenPrice(_tokenIdCounter.current() + i);
         }
         require(
             msg.value >= amountToPay,
@@ -240,8 +239,8 @@ contract BurningZombiesERC721 is
         );
 
         for (uint256 i = 0; numberOfTokens > i; i++) {
-            uint256 tokenId = _tokenIdTracker.current();
-            _tokenIdTracker.increment();
+            uint256 tokenId = _tokenIdCounter.current();
+            _tokenIdCounter.increment();
 
             address to = _msgSender();
 
@@ -254,7 +253,7 @@ contract BurningZombiesERC721 is
 
     function divideUnclaimedTokenReflection(uint256 numberOfTokens) public {
         require(
-            _tokenIdTracker.current() + numberOfTokens <= MAX_SUPPLY,
+            _tokenIdCounter.current() + numberOfTokens <= MAX_SUPPLY,
             "BurningZombiesERC721: burning exceeds max supply of tokens"
         );
         require(
@@ -264,7 +263,7 @@ contract BurningZombiesERC721 is
         require(!isSaleActive(), "BurningZombiesERC721: sale is active");
 
         for (uint256 i = 0; numberOfTokens > i; i++) {
-            _tokenIdTracker.increment();
+            _tokenIdCounter.increment();
             totalDividend += burnedReflectionBalance / totalSupply();
         }
 
@@ -272,10 +271,10 @@ contract BurningZombiesERC721 is
     }
 
     function calculateReflectionShare() public view returns (uint256) {
-        if (!(_tokenIdTracker.current() > 1)) return reflectionBase;
+        if (!(_tokenIdCounter.current() > 1)) return reflectionBase;
         return
             reflectionBase +
-            ((_tokenIdTracker.current() - 1) / segmentSize) *
+            ((_tokenIdCounter.current() - 1) / segmentSize) *
             reflectionStep;
     }
 
@@ -316,7 +315,7 @@ contract BurningZombiesERC721 is
     function claimReward(uint256 tokenId) public nonReentrant {
         require(!isSaleActive(), "BurningZombiesERC721: sale is active");
         require(
-            _tokenIdTracker.current() == MAX_SUPPLY,
+            _tokenIdCounter.current() == MAX_SUPPLY,
             "BurningZombiesERC721: there are unclaimed or not burned tokens"
         );
         require(
@@ -332,7 +331,7 @@ contract BurningZombiesERC721 is
     function claimRewards() public nonReentrant {
         require(!isSaleActive(), "BurningZombiesERC721: sale is active");
         require(
-            _tokenIdTracker.current() == MAX_SUPPLY,
+            _tokenIdCounter.current() == MAX_SUPPLY,
             "BurningZombiesERC721: there are unclaimed or not burned tokens"
         );
         uint256 count = balanceOf(_msgSender());
