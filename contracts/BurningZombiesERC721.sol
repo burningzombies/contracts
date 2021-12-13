@@ -2,14 +2,21 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./INeonMonstersMinters.sol";
+
+interface IPriceCalculator {
+    function getPrice(
+        uint256 segmentNo,
+        address sender,
+        uint256 basePrice,
+        uint256 balance
+    ) external view returns (uint256);
+}
 
 contract BurningZombiesERC721 is
     ERC721,
@@ -42,9 +49,7 @@ contract BurningZombiesERC721 is
     string private _baseURIextended;
     Counters.Counter private _tokenIdCounter;
     address private _splitter;
-
-    IERC721 private _neonMonstersContract;
-    INeonMonstersMinters private _neonMonstersMintersContract;
+    IPriceCalculator private _priceCalculator;
 
     mapping(uint256 => uint256) private _lastDividendAt;
     mapping(uint256 => address) private _minters;
@@ -88,15 +93,8 @@ contract BurningZombiesERC721 is
         priceStep = priceStep_;
     }
 
-    function setNeonMonstersContract(address address_) external onlyOwner {
-        _neonMonstersContract = IERC721(address_);
-    }
-
-    function setNeonMonstersMintersContract(address address_)
-        external
-        onlyOwner
-    {
-        _neonMonstersMintersContract = INeonMonstersMinters(address_);
+    function setPriceCalculator(address address_) external onlyOwner {
+        _priceCalculator = IPriceCalculator(address_);
     }
 
     function setMintingShareSplitter(address address_) external onlyOwner {
@@ -158,23 +156,9 @@ contract BurningZombiesERC721 is
         uint256 segmentNo = (tokenId / segmentSize);
         address sender = _msgSender();
         uint256 price = (segmentNo * priceStep) + priceBase;
+        uint256 balance = balanceOf(sender);
 
-        if (segmentNo == 0)
-            return
-                balanceOf(sender) <
-                    (uint256(_neonMonstersContract.balanceOf(sender)) / 10) &&
-                    _neonMonstersMintersContract.isMinter(sender)
-                    ? price / 10
-                    : price;
-
-        if (segmentNo == 1)
-            return
-                balanceOf(sender) == 0 &&
-                    _neonMonstersContract.balanceOf(sender) >= 10
-                    ? price / 2
-                    : price;
-
-        return price;
+        return _priceCalculator.getPrice(segmentNo, sender, price, balance);
     }
 
     function currentTokenPrice() public view returns (uint256) {

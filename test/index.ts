@@ -11,6 +11,7 @@ describe("Burning Zombies", function () {
 
   let contract: Contract;
   let nemo: Contract;
+  let priceCalculator: Contract;
   let nemoMinters: Contract;
   let splitter: Contract;
   let market: Contract;
@@ -43,6 +44,19 @@ describe("Burning Zombies", function () {
     nemoMinters = await nemoMinters_.deploy();
     await nemoMinters.deployed();
 
+    // deploy avaware
+    const avaware_ = await ethers.getContractFactory("Avaware");
+    const avaware = await avaware_.deploy();
+    await avaware.deployed();
+
+    const priceCalculator_ = await ethers.getContractFactory("PriceCalculator");
+    priceCalculator = await priceCalculator_.deploy();
+    await priceCalculator.deployed();
+
+    await priceCalculator.setAvaware(avaware.address);
+    await priceCalculator.setNeonMonsters(nemo.address);
+    await priceCalculator.setNeonMonstersMinters(nemoMinters.address);
+
     const factory = await ethers.getContractFactory("BurningZombiesERC721");
     contract = await factory.deploy(
       splitter.address,
@@ -52,8 +66,7 @@ describe("Burning Zombies", function () {
     );
     await contract.deployed();
 
-    await contract.setNeonMonstersContract(nemo.address);
-    await contract.setNeonMonstersMintersContract(nemoMinters.address);
+    await contract.setPriceCalculator(priceCalculator.address);
 
     // deploy market
     const market_ = await ethers.getContractFactory("BurningZombiesMarket");
@@ -122,12 +135,13 @@ describe("Burning Zombies", function () {
       process.stdout.write(`\r    > Mint index/4: ${i}`);
     }
     console.log("");
-    await contract.mintTokens(1, { value: "750000000000000000" });
-    await expect(contract.mintTokens(1, { value: "750000000000000000" })).to.be
+    await contract.mintTokens(1, { value: "1050000000000000000" });
+    await expect(contract.mintTokens(1, { value: "1050000000000000000" })).to.be
       .reverted;
+    await contract.mintTokens(1, { value: "1500000000000000000" });
 
     const balance = await contract.balanceOf(await owner.getAddress());
-    expect(balance.toNumber()).to.be.equal(1);
+    expect(balance.toNumber()).to.be.equal(2);
   });
 
   it("Should claim rewards", async () => {
