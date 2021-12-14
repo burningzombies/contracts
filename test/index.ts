@@ -144,9 +144,26 @@ describe("Burning Zombies", function () {
     expect(balance.toNumber()).to.be.equal(2);
   });
 
+  it("Should discount for $AVE holders", async () => {
+    let i = 0;
+    while (i <= 336 * 2) {
+      const addrsIndex: number = parseInt((i / 100).toString());
+      await contract
+        .connect(addrs[addrsIndex])
+        .mintTokens(1, { value: "1500000000000000000" });
+      process.stdout.write(`\r    > Mint index/$AVE: ${i}`);
+
+      i++;
+    }
+    console.log("");
+    await contract.mintTokens(1, { value: "1350000000000000000" });
+    await expect(contract.mintTokens(1, { value: "1350000000000000000" })).to.be
+      .reverted;
+  });
+
   it("Should claim rewards", async () => {
     const start = Math.floor(new Date().getTime() / 1000);
-    const duration = 1600;
+    const duration = 2000;
 
     await contract.setSaleStart(start);
     await contract.setSaleDuration(duration);
@@ -184,7 +201,7 @@ describe("Burning Zombies", function () {
 
     i = 0;
     while (true) {
-      const addrsIndex: number = parseInt((i / 100).toString());
+      const addrsIndex: number = parseInt((i / 1000).toString());
 
       if (i === 1)
         await expect(
@@ -212,7 +229,7 @@ describe("Burning Zombies", function () {
       .connect(addrs[0])
       .transferFrom(
         await addrs[0].getAddress(),
-        await addrs[16].getAddress(),
+        await addrs[18].getAddress(),
         1
       );
 
