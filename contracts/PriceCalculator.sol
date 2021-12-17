@@ -29,24 +29,18 @@ contract PriceCalculator is Ownable {
         uint256 price,
         uint256 balance
     ) public view returns (uint256) {
-        if (segmentNo == 0)
-            return
+        if (segmentNo == 0 || segmentNo == 1) {
+            if (
                 balance < (uint256(_neonMonsters.balanceOf(sender)) / 10) &&
-                    _neonMonstersMinters.isMinter(sender)
-                    ? price / 10
-                    : price;
+                _neonMonstersMinters.isMinter(sender)
+            ) return price / 10;
 
-        if (segmentNo == 1)
-            return
-                balance == 0 && _neonMonsters.balanceOf(sender) >= 10
-                    ? price - ((price / 100) * 30)
-                    : price;
+            if (balance == 0 && _neonMonsters.balanceOf(sender) >= 10)
+                return price - ((price / 100) * 30);
+        }
 
-        if (segmentNo == 2)
-            return
-                balance == 0 && _avaware.balanceOf(sender) >= 10000 ether
-                    ? price - ((price / 100) * 10)
-                    : price;
+        if (balance == 0 && _avaware.balanceOf(sender) >= 10000 ether)
+            return price - ((price / 100) * 10);
 
         return price;
     }
