@@ -14,6 +14,7 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   parserOptions: {
     ecmaVersion: 12,
+    warnOnUnsupportedTypeScriptVersion: false,
   },
   rules: {
     "node/no-unsupported-features/es-syntax": [

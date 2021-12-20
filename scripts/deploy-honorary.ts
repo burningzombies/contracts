@@ -1,23 +1,6 @@
-import { Contract } from "ethers";
 import { ethers } from "hardhat";
-import axios from "axios";
 import BurningZombiesHonoraryERC721 from "../artifacts/contracts/BurningZombiesHonoraryERC721.sol/BurningZombiesHonoraryERC721.json";
-
-const pinJSONToIPFS = async (
-  pinataApiKey: string,
-  pinataSecretApiKey: string,
-  JSONBody: any
-) => {
-  const url = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
-
-  const response = await axios.post(url, JSONBody, {
-    headers: {
-      pinata_api_key: pinataApiKey,
-      pinata_secret_api_key: pinataSecretApiKey,
-    },
-  });
-  return response;
-};
+import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
 async function main() {
   const [owner] = await ethers.getSigners();
