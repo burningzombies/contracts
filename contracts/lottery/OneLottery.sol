@@ -8,6 +8,9 @@ contract OneLottery is Ownable {
     // Participants
     address payable[] private _participants;
 
+    // The winner
+    address payable private _winner;
+
     // Total prize
     uint256 public prize;
 
@@ -123,12 +126,14 @@ contract OneLottery is Ownable {
         require(_participants.length > 0, "Lottery: no participant");
         uint256 indexOf = _psuedoRandom(seed) % _participants.length;
 
-        address payable winner = _participants[indexOf];
-        Address.sendValue(winner, prize);
+        _winner = _participants[indexOf];
+        Address.sendValue(_winner, prize);
 
-        emit Winner(winner);
+        emit Winner(_winner);
+    }
 
-        selfdestruct(payable(owner()));
+    function winner() external view returns (address) {
+        return _winner;
     }
 
     /**

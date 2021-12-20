@@ -82,8 +82,6 @@ describe("OneLottery", () => {
       BigNumber.from(0)
     );
 
-    await expect(lottery.owner()).to.be.reverted;
-
     process.stdout.write(`    > Winner: ${winner}\n`);
   });
 
