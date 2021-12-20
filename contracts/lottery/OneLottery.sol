@@ -51,8 +51,14 @@ contract OneLottery is Ownable {
      * - Ether value sent is must higher than 1 ether.
      */
     function start() public payable onlyOwner {
-        require(lotteryState == State.CLOSED, "Lottery: lottery state is not open");
-        require(msg.value >= 1 ether, "Lottery: ether value sent is not correct");
+        require(
+            lotteryState == State.CLOSED,
+            "Lottery: lottery state is not open"
+        );
+        require(
+            msg.value >= 1 ether,
+            "Lottery: ether value sent is not correct"
+        );
 
         lotteryState = State.OPEN;
         prize = msg.value;
@@ -72,8 +78,14 @@ contract OneLottery is Ownable {
      * - Ether value sent is must be equal or higher than the fees.
      */
     function participate(uint256 numberOfTickets) external payable {
-        require(numberOfTickets <= MAX_TICKET_PER_TX, "Lottery: maximum ticket purchase exceeds");
-        require(lotteryState == State.OPEN, "Lottery: lottery state is not open");
+        require(
+            numberOfTickets <= MAX_TICKET_PER_TX,
+            "Lottery: maximum ticket purchase exceeds"
+        );
+        require(
+            lotteryState == State.OPEN,
+            "Lottery: lottery state is not open"
+        );
         require(numberOfTickets > 0, "Lottery: zero ticket");
         require(!Address.isContract(_msgSender()), "Lottery: conract call");
 
@@ -101,7 +113,13 @@ contract OneLottery is Ownable {
      *
      */
     function finalize(uint256 seed) public onlyOwner {
-        require(lotteryState == State.OPEN, "Lottery: lottery state is not open");
+        require(
+            lotteryState == State.OPEN,
+            "Lottery: lottery state is not open"
+        );
+
+        lotteryState = State.CLOSED;
+
         require(_participants.length > 0, "Lottery: no participant");
         uint256 indexOf = _psuedoRandom(seed) % _participants.length;
 
