@@ -27,15 +27,20 @@ task("lottery", "Manage lottery", async (taskArgs: any, hre) => {
 
     switch (taskArgs.cmd) {
       case "start": {
-        await lottery
-          .connect(owner)
-          .start({ value: hre.ethers.utils.parseUnits("1", 18) });
+        if (typeof taskArgs.prize === "undefined")
+          throw new Error("Base prize is required.");
+
+        await lottery.connect(owner).start({
+          value: hre.ethers.utils.parseUnits(taskArgs.prize, 18),
+        });
+
         process.exit(0); // eslint-disable-line no-process-exit
       }
       case "finalize": {
         await lottery
           .connect(owner)
           .finalize(Math.floor(Math.random() * new Date().getTime()));
+
         process.exit(0); // eslint-disable-line no-process-exit
       }
       default: {
@@ -48,7 +53,8 @@ task("lottery", "Manage lottery", async (taskArgs: any, hre) => {
   }
 })
   .addPositionalParam("cmd")
-  .addParam("contract", "Contract Address");
+  .addParam("contract", "Contract Address")
+  .addOptionalParam("prize", "Base Prize");
 
 const config: HardhatUserConfig = {
   solidity: {
