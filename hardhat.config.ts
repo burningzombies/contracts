@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "./tasks/lottery"; // eslint-disable-line
 
 dotenv.config();
 
@@ -13,48 +14,18 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
   const accounts = await hre.ethers.getSigners();
 
   for (const account of accounts) {
-    console.log(account.address);
+    console.log(
+      account.address +
+        " " +
+        parseInt(
+          hre.ethers.utils.formatUnits(
+            await hre.ethers.provider.getBalance(await account.getAddress()),
+            18
+          )
+        ).toFixed(2)
+    );
   }
 });
-
-task("lottery", "Manage lottery", async (taskArgs: any, hre) => {
-  try {
-    const [owner] = await hre.ethers.getSigners();
-    const lottery = await hre.ethers.getContractAt(
-      "OneLottery",
-      taskArgs.contract
-    );
-
-    switch (taskArgs.cmd) {
-      case "start": {
-        if (typeof taskArgs.prize === "undefined")
-          throw new Error("Base prize is required.");
-
-        await lottery.connect(owner).start({
-          value: hre.ethers.utils.parseUnits(taskArgs.prize, 18),
-        });
-
-        process.exit(0); // eslint-disable-line no-process-exit
-      }
-      case "finalize": {
-        await lottery
-          .connect(owner)
-          .finalize(Math.floor(Math.random() * new Date().getTime()));
-
-        process.exit(0); // eslint-disable-line no-process-exit
-      }
-      default: {
-        throw new Error("No arg.");
-      }
-    }
-  } catch (err: any) {
-    console.log(err.stack);
-    process.exit(1); // eslint-disable-line no-process-exit
-  }
-})
-  .addPositionalParam("cmd")
-  .addParam("contract", "Contract Address")
-  .addOptionalParam("prize", "Base Prize");
 
 const config: HardhatUserConfig = {
   solidity: {

@@ -2,10 +2,14 @@ import { ethers } from "hardhat";
 import OneLottery from "../artifacts/contracts/lottery/OneLottery.sol/OneLottery.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
+const ARGV = process.argv.slice(2);
+
 async function deploy() {
+  if (typeof ARGV[0] === "undefined") throw new Error("Fee is required.");
+
   const lotteryFactory = await ethers.getContractFactory("OneLottery");
   const lottery = await lotteryFactory.deploy(
-    ethers.utils.parseUnits("0.05", 18)
+    ethers.utils.parseUnits(ARGV[0], 18)
   );
   await lottery.deployed();
 
