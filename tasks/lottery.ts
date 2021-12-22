@@ -59,7 +59,7 @@ subtask("start-lottery", "Start Lottery")
   .setAction(async (args: any, hre) => {
     const lottery = await hre.ethers.getContractAt("OneLottery", args.contract);
 
-    const tx = lottery.start({
+    const tx = await lottery.start({
       value: hre.ethers.utils.parseUnits(args.prize, 18),
     });
     await tx.wait();
