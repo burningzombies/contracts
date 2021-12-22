@@ -59,9 +59,10 @@ subtask("start-lottery", "Start Lottery")
   .setAction(async (args: any, hre) => {
     const lottery = await hre.ethers.getContractAt("OneLottery", args.contract);
 
-    await lottery.start({
+    const tx = lottery.start({
       value: hre.ethers.utils.parseUnits(args.prize, 18),
     });
+    await tx.wait();
   });
 
 subtask("end-lottery", "Start Lottery")
@@ -69,5 +70,8 @@ subtask("end-lottery", "Start Lottery")
   .setAction(async (args: any, hre) => {
     const lottery = await hre.ethers.getContractAt("OneLottery", args.contract);
 
-    await lottery.finalize(Math.floor(Math.random() * new Date().getTime()));
+    const tx = await lottery.finalize(
+      Math.floor(Math.random() * new Date().getTime())
+    );
+    await tx.wait();
   });
