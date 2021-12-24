@@ -53,7 +53,10 @@ describe("Burning Zombies", function () {
     priceCalculator = await priceCalculator_.deploy();
     await priceCalculator.deployed();
 
-    await priceCalculator.setAvaware(avaware.address);
+    await priceCalculator.addERC20Token(
+      avaware.address,
+      "10000000000000000000000"
+    );
     await priceCalculator.setNeonMonsters(nemo.address);
     await priceCalculator.setNeonMonstersMinters(nemoMinters.address);
 
@@ -110,43 +113,32 @@ describe("Burning Zombies", function () {
   });
 
   it("Should discount for nemo holders", async () => {
-    for (let i = 0; i < 100; i++) {
+    let i = 0;
+    while (i < 336) {
+      const addrsIndex: number = parseInt((i / 100).toString());
       await contract
-        .connect(addrs[1])
+        .connect(addrs[addrsIndex])
         .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index: ${i}`);
-    }
-    for (let i = 0; i < 100; i++) {
-      await contract
-        .connect(addrs[2])
-        .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index/2: ${i}`);
-    }
-    for (let i = 0; i < 100; i++) {
-      await contract
-        .connect(addrs[3])
-        .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index/3: ${i}`);
-    }
-    for (let i = 0; i < 100; i++) {
-      await contract
-        .connect(addrs[4])
-        .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index/4: ${i}`);
+      process.stdout.write(`\r    > Mint index/$NEMO: ${i}`);
+
+      i++;
     }
     console.log("");
-    await contract.mintTokens(1, { value: "1050000000000000000" });
-    await expect(contract.mintTokens(1, { value: "1050000000000000000" })).to.be
+    await contract.mintTokens(1, { value: "1350000000000000000" });
+    await contract.mintTokens(1, { value: "1350000000000000000" });
+    await contract.mintTokens(1, { value: "1350000000000000000" });
+
+    await expect(contract.mintTokens(1, { value: "1350000000000000000" })).to.be
       .reverted;
     await contract.mintTokens(1, { value: "1500000000000000000" });
 
     const balance = await contract.balanceOf(await owner.getAddress());
-    expect(balance.toNumber()).to.be.equal(2);
+    expect(balance.toNumber()).to.be.equal(4);
   });
 
   it("Should discount for $AVE holders", async () => {
     let i = 0;
-    while (i <= 336 * 2) {
+    while (i < 336 * 5) {
       const addrsIndex: number = parseInt((i / 100).toString());
       await contract
         .connect(addrs[addrsIndex])
@@ -157,13 +149,15 @@ describe("Burning Zombies", function () {
     }
     console.log("");
     await contract.mintTokens(1, { value: "1350000000000000000" });
+    await contract.mintTokens(1, { value: "1350000000000000000" });
+    await contract.mintTokens(1, { value: "1350000000000000000" });
     await expect(contract.mintTokens(1, { value: "1350000000000000000" })).to.be
       .reverted;
   });
 
   it("Should claim rewards", async () => {
     const start = Math.floor(new Date().getTime() / 1000);
-    const duration = 2000;
+    const duration = 3000;
 
     await contract.setSaleStart(start);
     await contract.setSaleDuration(duration);
