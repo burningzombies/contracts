@@ -6,26 +6,9 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
-import "./tasks/lottery"; // eslint-disable-line
+import "./tasks"; // eslint-disable-line
 
 dotenv.config();
-
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(
-      account.address +
-        " " +
-        parseInt(
-          hre.ethers.utils.formatUnits(
-            await hre.ethers.provider.getBalance(await account.getAddress()),
-            18
-          )
-        ).toFixed(2)
-    );
-  }
-});
 
 const config: HardhatUserConfig = {
   solidity: {

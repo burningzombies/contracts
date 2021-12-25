@@ -75,3 +75,20 @@ subtask("end-lottery", "Start Lottery")
     );
     await tx.wait();
   });
+
+task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
+  const accounts = await hre.ethers.getSigners();
+
+  for (const account of accounts) {
+    console.log(
+      account.address +
+        " " +
+        parseInt(
+          hre.ethers.utils.formatUnits(
+            await hre.ethers.provider.getBalance(await account.getAddress()),
+            18
+          )
+        ).toFixed(2)
+    );
+  }
+});
