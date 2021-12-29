@@ -16,6 +16,16 @@ describe("Burning Zombies", function () {
   let splitter: Contract;
   let market: Contract;
 
+  // erc721 mock contracts
+  let xERC721Token: Contract;
+  let yERC721Token: Contract;
+  let zERC721Token: Contract;
+
+  // erc20 mock contracts
+  let xERC20Token: Contract;
+  let yERC20Token: Contract;
+  let zERC20Token: Contract;
+
   beforeEach(async () => {
     start = Math.floor(new Date().getTime() / 1000);
     duration = 60 * 60 * 7;
@@ -35,8 +45,8 @@ describe("Burning Zombies", function () {
     await splitter.deployed();
 
     // deploy nemo mock
-    const nemo_ = await ethers.getContractFactory("NeonMonsters");
-    nemo = await nemo_.deploy();
+    const nemo_ = await ethers.getContractFactory("ERC721Mock");
+    nemo = await nemo_.deploy(24);
     await nemo.deployed();
 
     // deploy nemo minters
@@ -44,21 +54,61 @@ describe("Burning Zombies", function () {
     nemoMinters = await nemoMinters_.deploy();
     await nemoMinters.deployed();
 
-    // deploy avaware
-    const avaware_ = await ethers.getContractFactory("Avaware");
-    const avaware = await avaware_.deploy();
-    await avaware.deployed();
+    // deploy erc20s
+    const xERC20Factory = await ethers.getContractFactory("ERC20Mock");
+    const yERC20Factory = await ethers.getContractFactory("ERC20Mock");
+    const zERC20Factory = await ethers.getContractFactory("ERC20Mock");
+
+    xERC20Token = await xERC20Factory
+      .connect(addrs[90])
+      .deploy(ethers.utils.parseUnits("10000", 18));
+    yERC20Token = await xERC20Factory
+      .connect(addrs[91])
+      .deploy(ethers.utils.parseUnits("10000", 18));
+    zERC20Token = await xERC20Factory
+      .connect(addrs[92])
+      .deploy(ethers.utils.parseUnits("10000", 18));
+
+    await xERC20Token.deployed();
+    await yERC20Token.deployed();
+    await zERC20Token.deployed();
+
+    // deploy erc721s
+    const xERC721Factory = await ethers.getContractFactory("ERC721Mock");
+    const yERC721Factory = await ethers.getContractFactory("ERC721Mock");
+    const zERC721Factory = await ethers.getContractFactory("ERC721Mock");
+
+    xERC721Token = await xERC721Factory.connect(addrs[93]).deploy(3);
+    yERC721Token = await xERC721Factory.connect(addrs[94]).deploy(3);
+    zERC721Token = await xERC721Factory.connect(addrs[95]).deploy(3);
+
+    await xERC721Token.deployed();
+    await yERC721Token.deployed();
+    await zERC721Token.deployed();
 
     const priceCalculator_ = await ethers.getContractFactory("PriceCalculator");
     priceCalculator = await priceCalculator_.deploy();
     await priceCalculator.deployed();
 
-    await priceCalculator.addERC20Token(
-      avaware.address,
-      "10000000000000000000000"
-    );
     await priceCalculator.setNeonMonsters(nemo.address);
     await priceCalculator.setNeonMonstersMinters(nemoMinters.address);
+
+    await priceCalculator.addERC20Token(
+      xERC20Token.address,
+      ethers.utils.parseUnits("10000", 18)
+    );
+    await priceCalculator.addERC20Token(
+      yERC20Token.address,
+      ethers.utils.parseUnits("10000", 18)
+    );
+    await priceCalculator.addERC20Token(
+      zERC20Token.address,
+      ethers.utils.parseUnits("10000", 18)
+    );
+
+    await priceCalculator.addERC721Token(xERC721Token.address, 1);
+    await priceCalculator.addERC721Token(yERC721Token.address, 3);
+    await priceCalculator.addERC721Token(zERC721Token.address, 3);
 
     const factory = await ethers.getContractFactory("BurningZombiesERC721");
     contract = await factory.deploy(
@@ -112,52 +162,9 @@ describe("Burning Zombies", function () {
       .reverted;
   });
 
-  it("Should discount for nemo holders", async () => {
-    let i = 0;
-    while (i < 336) {
-      const addrsIndex: number = parseInt((i / 100).toString());
-      await contract
-        .connect(addrs[addrsIndex])
-        .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index/$NEMO: ${i}`);
-
-      i++;
-    }
-    console.log("");
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-
-    await expect(contract.mintTokens(1, { value: "1350000000000000000" })).to.be
-      .reverted;
-    await contract.mintTokens(1, { value: "1500000000000000000" });
-
-    const balance = await contract.balanceOf(await owner.getAddress());
-    expect(balance.toNumber()).to.be.equal(4);
-  });
-
-  it("Should discount for $AVE holders", async () => {
-    let i = 0;
-    while (i < 336 * 5) {
-      const addrsIndex: number = parseInt((i / 100).toString());
-      await contract
-        .connect(addrs[addrsIndex])
-        .mintTokens(1, { value: "1500000000000000000" });
-      process.stdout.write(`\r    > Mint index/$AVE: ${i}`);
-
-      i++;
-    }
-    console.log("");
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-    await contract.mintTokens(1, { value: "1350000000000000000" });
-    await expect(contract.mintTokens(1, { value: "1350000000000000000" })).to.be
-      .reverted;
-  });
-
   it("Should claim rewards", async () => {
     const start = Math.floor(new Date().getTime() / 1000);
-    const duration = 3000;
+    const duration = 1000;
 
     await contract.setSaleStart(start);
     await contract.setSaleDuration(duration);
@@ -349,5 +356,49 @@ describe("Burning Zombies", function () {
   it("Should not burn if it's active", async () => {
     await contract.mintTokens(1, { value: "1500000000000000000" });
     await expect(contract.burn(0)).be.reverted;
+  });
+
+  it("Should see discount", async () => {
+    let i = 0;
+    while (i < 336 * 9) {
+      const addrsIndex: number = parseInt((i / 100).toString());
+
+      await contract
+        .connect(addrs[addrsIndex])
+        .mintTokens(1, { value: "1500000000000000000" });
+
+      const tokenId = (await contract.currentTokenId()).toNumber();
+      const segmentSize = (await contract.segmentSize()).toNumber();
+      const segmentNo = parseInt((tokenId / segmentSize).toString());
+
+      // NFT
+      if (segmentNo > 0 && segmentNo < 5) {
+        const tokenPrice = await contract
+          .connect(addrs[90])
+          .currentTokenPrice();
+        expect(ethers.utils.formatUnits(tokenPrice, 18)).to.be.equal("1.5");
+
+        const tokenPriceNFT = await contract
+          .connect(addrs[94])
+          .currentTokenPrice();
+        expect(ethers.utils.formatUnits(tokenPriceNFT, 18)).to.be.equal("1.35");
+
+        process.stdout.write(`\r    > NFT Round (${i})`);
+      }
+
+      // DeFi
+      if (segmentNo >= 5 && segmentNo < 9) {
+        const tokenPrice = await contract
+          .connect(addrs[90])
+          .currentTokenPrice();
+
+        expect(ethers.utils.formatUnits(tokenPrice, 18)).to.be.equal("1.35");
+
+        process.stdout.write(`\r    > DeFi Round (${i})`);
+      }
+
+      i++;
+    }
+    process.stdout.write("\n");
   });
 });

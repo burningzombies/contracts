@@ -76,19 +76,43 @@ subtask("end-lottery", "Start Lottery")
     await tx.wait();
   });
 
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
+task(
+  "accounts",
+  "Prints the list of accounts",
+  async (taskArgs: any, hre: any) => {
+    if (taskArgs.new) {
+      hre.run("new-accounts", { count: taskArgs.count });
+      process.exit(0);
+    }
+    const accounts = await hre.ethers.getSigners();
 
-  for (const account of accounts) {
-    console.log(
-      account.address +
-        " " +
-        parseInt(
-          hre.ethers.utils.formatUnits(
-            await hre.ethers.provider.getBalance(await account.getAddress()),
-            18
-          )
-        ).toFixed(2)
-    );
+    for (const account of accounts) {
+      console.log(
+        account.address +
+          " " +
+          parseInt(
+            hre.ethers.utils.formatUnits(
+              await hre.ethers.provider.getBalance(await account.getAddress()),
+              18
+            )
+          ).toFixed(2)
+      );
+    }
   }
-});
+)
+  .addFlag("new")
+  .addOptionalParam("count");
+
+subtask(
+  "new-accounts",
+  "Generate new accounts",
+  async (taskArgs: any, hre: any) => {
+    const count = taskArgs.count ? taskArgs.count : 1;
+
+    for (let i = 0; count > i; i++) {
+      process.stdout.write(
+        hre.ethers.Wallet.createRandom().privateKey.split("0x").join("") + "\n"
+      );
+    }
+  }
+).addOptionalParam("count");

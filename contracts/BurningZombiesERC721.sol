@@ -8,15 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-
-interface IPriceCalculator {
-    function getPrice(
-        uint256 segmentNo,
-        address sender,
-        uint256 basePrice,
-        uint256 balance
-    ) external view returns (uint256);
-}
+import "./interfaces/IPriceCalculator.sol";
 
 contract BurningZombiesERC721 is
     ERC721,
@@ -153,7 +145,7 @@ contract BurningZombiesERC721 is
     }
 
     function _tokenPrice(uint256 tokenId) private view returns (uint256) {
-        uint256 segmentNo = (tokenId / segmentSize);
+        uint256 segmentNo = uint256(uint256(tokenId) / uint256(segmentSize));
         address sender = _msgSender();
         uint256 price = (segmentNo * priceStep) + priceBase;
         uint256 balance = balanceOf(sender);

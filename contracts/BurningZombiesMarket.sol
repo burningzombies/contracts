@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "./IBurningZombiesERC721.sol";
+import "./interfaces/IBurningZombiesERC721.sol";
 
 contract BurningZombiesMarket is Ownable, Pausable, ReentrancyGuard {
     event Sale(
