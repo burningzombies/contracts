@@ -27,6 +27,10 @@ task("lottery", "Print help")
         await hre.run("end-lottery", { contract: args.contract });
         process.exit(0); // eslint-disable-line no-process-exit
       }
+      case "seed": {
+        await hre.run("generate-random-number");
+        process.exit(0); // eslint-disable-line no-process-exit
+      }
       default: {
         throw new Error("Not valid command.");
       }
@@ -65,14 +69,26 @@ subtask("start-lottery", "Start Lottery")
     await tx.wait();
   });
 
+subtask("generate-random-number", "Generate Random Number").setAction(
+  async (args: any, hre: any) => {
+    const xyz = Math.floor(Math.random() * new Date().getTime());
+    const multiplier = Math.floor(Math.random() * xyz);
+
+    const result = hre.ethers.utils
+      .parseUnits(xyz.toString(), 6)
+      .mul(hre.ethers.BigNumber.from(multiplier));
+    process.stdout.write(`${result}\n`);
+
+    return result;
+  }
+);
+
 subtask("end-lottery", "Start Lottery")
   .addParam("contract")
   .setAction(async (args: any, hre) => {
     const lottery = await hre.ethers.getContractAt("OneLottery", args.contract);
 
-    const tx = await lottery.finalize(
-      Math.floor(Math.random() * new Date().getTime())
-    );
+    const tx = await lottery.finalize(await hre.run("generate-random-number"));
     await tx.wait();
   });
 
