@@ -62,10 +62,10 @@ describe("Burning Zombies", function () {
     xERC20Token = await xERC20Factory
       .connect(addrs[90])
       .deploy(ethers.utils.parseUnits("10000", 18));
-    yERC20Token = await xERC20Factory
+    yERC20Token = await yERC20Factory
       .connect(addrs[91])
       .deploy(ethers.utils.parseUnits("10000", 18));
-    zERC20Token = await xERC20Factory
+    zERC20Token = await zERC20Factory
       .connect(addrs[92])
       .deploy(ethers.utils.parseUnits("10000", 18));
 
@@ -79,8 +79,8 @@ describe("Burning Zombies", function () {
     const zERC721Factory = await ethers.getContractFactory("ERC721Mock");
 
     xERC721Token = await xERC721Factory.connect(addrs[93]).deploy(3);
-    yERC721Token = await xERC721Factory.connect(addrs[94]).deploy(3);
-    zERC721Token = await xERC721Factory.connect(addrs[95]).deploy(3);
+    yERC721Token = await yERC721Factory.connect(addrs[94]).deploy(3);
+    zERC721Token = await zERC721Factory.connect(addrs[95]).deploy(3);
 
     await xERC721Token.deployed();
     await yERC721Token.deployed();

@@ -82,7 +82,7 @@ task(
   async (taskArgs: any, hre: any) => {
     if (taskArgs.new) {
       hre.run("new-accounts", { count: taskArgs.count });
-      process.exit(0);
+      process.exit(0); // eslint-disable-line no-process-exit
     }
     const accounts = await hre.ethers.getSigners();
 
