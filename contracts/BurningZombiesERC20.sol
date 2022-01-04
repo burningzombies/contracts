@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 contract BurningZombiesERC20 is ERC20, ERC20Burnable {
     uint256 public constant TOTAL_SUPPLY = 24_000_000e18;
 
-    constructor() ERC20("Burning Zombies", "ZOMBIE") {
+    constructor() ERC20("Burning Zombies", "BURN") {
         _mint(_msgSender(), TOTAL_SUPPLY);
     }
 }

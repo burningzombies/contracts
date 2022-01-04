@@ -31,8 +31,6 @@ async function main() {
   console.log("");
 
   const honoraryABIResponse = await pinJSONToIPFS(
-    process.env.PINATA_API_KEY as string,
-    process.env.PINATA_API_SECRET as string,
     BurningZombiesHonoraryERC721.abi
   );
 
