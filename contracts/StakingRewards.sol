@@ -97,12 +97,14 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
                 address(this),
                 tokenIds[i]
             );
+
             _owners[tokenIds[i]] = _msgSender();
+
+            emit Staked(_msgSender(), tokenIds[i]);
         }
 
         _totalSupply = _totalSupply.add(tokenIds.length);
         _balances[_msgSender()] = _balances[_msgSender()].add(tokenIds.length);
-        emit Staked(_msgSender(), tokenIds);
     }
 
     function withdraw(uint256[] memory tokenIds)
@@ -123,11 +125,12 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
                 _msgSender(),
                 tokenIds[i]
             );
+
+            emit Withdrawn(_msgSender(), tokenIds[i]);
         }
 
         _totalSupply = _totalSupply.sub(tokenIds.length);
         _balances[_msgSender()] = _balances[_msgSender()].sub(tokenIds.length);
-        emit Withdrawn(_msgSender(), tokenIds);
     }
 
     function getReward() public nonReentrant updateReward(_msgSender()) {
@@ -221,8 +224,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
     /* ========== EVENTS ========== */
 
     event RewardAdded(uint256 reward);
-    event Staked(address indexed user, uint256[] tokenIds);
-    event Withdrawn(address indexed user, uint256[] tokenIds);
+    event Staked(address indexed user, uint256 indexed tokenIds);
+    event Withdrawn(address indexed user, uint256 indexed tokenIds);
     event RewardPaid(address indexed user, uint256 reward);
     event RewardsDurationUpdated(uint256 newDuration);
     event Recovered(address token, uint256 amount);
