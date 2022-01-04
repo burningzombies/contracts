@@ -134,7 +134,7 @@ describe("Burning Zombies", function () {
 
     await contract
       .connect(addrs[0])
-      .mintTokens(1, { value: "2000000000000000000" });
+      .mint({ value: "2000000000000000000" });
 
     expect(
       (await contract.connect(addrs[0]).currentTokenPrice()).toString()
@@ -143,7 +143,7 @@ describe("Burning Zombies", function () {
 
   it("Should discount for nemo minters", async () => {
     await nemoMinters.setMinter(await owner.getAddress());
-    await contract.mintTokens(1, { value: "150000000000000000" });
+    await contract.mint({ value: "150000000000000000" });
 
     const balance = await contract.balanceOf(await owner.getAddress());
     expect(balance.toNumber()).to.be.equal(1);
@@ -157,8 +157,8 @@ describe("Burning Zombies", function () {
     const splitterBalance = await ethers.provider.getBalance(splitter.address);
     expect(splitterBalance.toString()).to.be.equal("105000000000000000");
 
-    await contract.mintTokens(1, { value: "150000000000000000" });
-    await expect(contract.mintTokens(1, { value: "150000000000000000" })).to.be
+    await contract.mint({ value: "150000000000000000" });
+    await expect(contract.mint({ value: "150000000000000000" })).to.be
       .reverted;
   });
 
@@ -177,7 +177,7 @@ describe("Burning Zombies", function () {
       const addrsIndex: number = parseInt((i / 100).toString());
 
       try {
-        await contract.connect(addrs[addrsIndex]).mintTokens(1, {
+        await contract.connect(addrs[addrsIndex]).mint({
           value: await contract.connect(addrs[addrsIndex]).currentTokenPrice(),
         });
 
@@ -315,7 +315,7 @@ describe("Burning Zombies", function () {
 
     expect(initial.toNumber()).to.be.equal(30);
 
-    await contract.mintTokens(1, { value: "1500000000000000000" });
+    await contract.mint({ value: "1500000000000000000" });
 
     expect((await contract.calculateReflectionShare()).toNumber()).to.be.equal(
       30
@@ -328,14 +328,14 @@ describe("Burning Zombies", function () {
   });
 
   it("Shoul not sell if paused", async () => {
-    await contract.mintTokens(1, { value: "1500000000000000000" });
+    await contract.mint({ value: "1500000000000000000" });
     await contract.approve(market.address, 0);
 
     await expect(market.createListing(0, 500)).to.be.reverted;
   });
 
   it("Should send if from owner", async () => {
-    await contract.mintTokens(1, { value: "1500000000000000000" });
+    await contract.mint({ value: "1500000000000000000" });
     await contract.transferFrom(
       await owner.getAddress(),
       await addrs[0].getAddress(),
@@ -354,7 +354,7 @@ describe("Burning Zombies", function () {
   });
 
   it("Should not burn if it's active", async () => {
-    await contract.mintTokens(1, { value: "1500000000000000000" });
+    await contract.mint({ value: "1500000000000000000" });
     await expect(contract.burn(0)).be.reverted;
   });
 
@@ -365,7 +365,7 @@ describe("Burning Zombies", function () {
 
       await contract
         .connect(addrs[addrsIndex])
-        .mintTokens(1, { value: "1500000000000000000" });
+        .mint({ value: "1500000000000000000" });
 
       const tokenId = (await contract.currentTokenId()).toNumber();
       const segmentSize = (await contract.segmentSize()).toNumber();

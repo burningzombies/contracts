@@ -181,7 +181,7 @@ contract BurningZombiesERC721 is
 
     /* ========== GOVERNOR FUNCTIONS ========== */
 
-    function mintTokensByOwner(uint256 numberOfTokens, address to)
+    function mintTokens(uint256 numberOfTokens, address to)
         external
         payable
         onlyOwner
@@ -248,30 +248,22 @@ contract BurningZombiesERC721 is
 
     /* ========== MUTATIVE FUNCTIONS ========== */
 
-    function mintTokens(uint256 numberOfTokens) external payable {
+    function mint() external payable {
         require(isSaleActive(), "BurningZombiesERC721: sale is not active");
 
         require(
-            numberOfTokens > 0 && numberOfTokens <= MAX_TOKEN_PER_TX,
-            "BurningZombiesERC721: purchase exceeds max limit per transaction"
-        );
-
-        require(
-            _tokenIdCounter.current() + numberOfTokens <= MAX_SUPPLY,
+            _tokenIdCounter.current() < MAX_SUPPLY,
             "BurningZombiesERC721: purchase exceeds max supply of tokens"
         );
 
-        uint256 amountToPay;
-        for (uint256 i = 0; numberOfTokens > i; i++) {
-            amountToPay += _tokenPrice(_tokenIdCounter.current() + i);
-        }
+        uint256 amountToPay = _tokenPrice(_tokenIdCounter.current());
 
         require(
             msg.value >= amountToPay,
             "BurningZombiesERC721: ether value sent is not correct"
         );
 
-        _mintTokens(numberOfTokens, _msgSender());
+        _mintTokens(1, _msgSender());
 
         _splitBalance(amountToPay);
     }

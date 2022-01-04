@@ -50,23 +50,23 @@ describe("StakingRewards", () => {
   it("Should stake", async () => {
     await expect(stakingRewards.stake([0, 1, 2, 3, 4, 5]))
       .to.emit(stakingRewards, "Staked")
-      .withArgs(await owner.getAddress(), [0, 1, 2, 3, 4, 5]);
+      .withArgs(await owner.getAddress(), 0);
   });
 
   it("Should withdraw", async () => {
     await expect(stakingRewards.stake([0, 1, 2, 3, 4, 5]))
       .to.emit(stakingRewards, "Staked")
-      .withArgs(await owner.getAddress(), [0, 1, 2, 3, 4, 5]);
+      .withArgs(await owner.getAddress(), 0);
 
     await expect(stakingRewards.withdraw([0, 1, 2, 3, 4, 5]))
       .to.emit(stakingRewards, "Withdrawn")
-      .withArgs(await owner.getAddress(), [0, 1, 2, 3, 4, 5]);
+      .withArgs(await owner.getAddress(), 0);
   });
 
   it("Should get rewards", async () => {
     await expect(stakingRewards.stake([0, 1, 2, 3, 4, 5]))
       .to.emit(stakingRewards, "Staked")
-      .withArgs(await owner.getAddress(), [0, 1, 2, 3, 4, 5]);
+      .withArgs(await owner.getAddress(), 0);
 
     await expect(stakingRewards.getReward()).to.emit(
       stakingRewards,

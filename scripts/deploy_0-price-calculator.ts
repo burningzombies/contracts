@@ -11,12 +11,12 @@ const main = async () => {
   const res = await pinJSONToIPFS(Artifact.abi);
 
   const setNemoTx = await calculator.setNeonMonsters(
-    "0x1b72CFde16E5a33a36eAAFbf2eb9CDEd02B09577"
+    "0xff3C26091b08F43494fF02BDDBAA5efafA3f78a7"
   );
   await setNemoTx.wait();
 
   const setNemoMintersTx = await calculator.setNeonMonstersMinters(
-    "0x86796ff038D063a216D92167e53bA447E9Ce3C51"
+    "0x8FD8c6dc93305D31A51dcDfaB276491bB02950AC"
   );
   await setNemoMintersTx.wait();
 
