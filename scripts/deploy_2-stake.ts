@@ -3,7 +3,7 @@ import Artifact from "../artifacts/contracts/StakingRewards.sol/StakingRewards.j
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
 const REWARDS_ADDR = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-const STAKING_ADDR = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const STAKING_ADDR = "0xf2d0De3d25eBa9D2D84380fDcc7f41A6E4670bD0";
 
 const main = async () => {
   const stakeFactory = await ethers.getContractFactory("StakingRewards");

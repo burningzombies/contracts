@@ -77,7 +77,7 @@ contract PriceCalculator is Ownable {
         if (round == Round.NFT) {
             for (uint256 i = 0; _erc721Tokens.length > i; i++) {
                 if (
-                    _erc721Tokens[i].balanceOf(sender) >=
+                    IERC721(_erc721Tokens[i]).balanceOf(sender) >=
                     _minHoldingAmounts[address(_erc721Tokens[i])]
                 ) {
                     isEligible = true;
@@ -87,7 +87,7 @@ contract PriceCalculator is Ownable {
         } else if (round == Round.DEFI) {
             for (uint256 i = 0; _erc20Tokens.length > i; i++) {
                 if (
-                    _erc20Tokens[i].balanceOf(sender) >=
+                    IERC20(_erc20Tokens[i]).balanceOf(sender) >=
                     _minHoldingAmounts[address(_erc20Tokens[i])]
                 ) {
                     isEligible = true;
