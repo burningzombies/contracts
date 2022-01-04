@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -17,7 +17,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
     /* ========== STATE VARIABLES ========== */
 
     IERC20 public rewardsToken;
-    IERC721Enumerable public stakingToken;
+    IERC721 public stakingToken;
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public rewardsDuration = 7 days;
@@ -35,7 +35,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
 
     constructor(address _rewardsToken, address _stakingToken) {
         rewardsToken = IERC20(_rewardsToken);
-        stakingToken = IERC721Enumerable(_stakingToken);
+        stakingToken = IERC721(_stakingToken);
     }
 
     /* ========== VIEWS ========== */
