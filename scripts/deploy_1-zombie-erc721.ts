@@ -2,13 +2,18 @@ import { ethers } from "hardhat";
 import Artifact from "../artifacts/contracts/BurningZombiesERC721.sol/BurningZombiesERC721.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
-const PRICE_CALCULATOR_ADDR = "0x487D9a8E4e45Fdc06E43c78232c067D5424355D8";
-const SPLITTER_ADDR = "0x3fd6e3F34Ff2da4e555Ad2dC5e743CF0C65C88D3";
+const PRICE_CALCULATOR_ADDR = "0x7D5B2e34381A955ac80e925A4fBba356194ed194";
+const SPLITTER_ADDR = "0xE70b9a060785daE17bF8A9f3CdA200e2c7267EBa";
 const BASE_URI = "ipfs://QmWuFvirTSvcUBRKUugKtajTruNxMGrg9m1defTPftjoGk/";
 
 const main = async () => {
   const masterFactory = await ethers.getContractFactory("BurningZombiesERC721");
-  const master = await masterFactory.deploy(SPLITTER_ADDR, BASE_URI, 0, 0);
+  const master = await masterFactory.deploy(
+    SPLITTER_ADDR,
+    BASE_URI,
+    Math.floor(new Date().getTime() / 1000),
+    43500
+  );
 
   await master.deployed();
 

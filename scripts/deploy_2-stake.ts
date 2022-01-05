@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import Artifact from "../artifacts/contracts/StakingRewards.sol/StakingRewards.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
-const REWARDS_ADDR = "0x6F669ddB644964eEB4d6437842800A41e215AE8C";
-const STAKING_ADDR = "0xFCf61D1B30ccc38a84B8e42BF06DC918e4B7DCA8";
+const REWARDS_ADDR = "0x2017E625a7661F65Dd5Ee0a61C1B84d601212131";
+const STAKING_ADDR = "0x15Ee4A7a3f9DCe5ABc2Ca40B37729B5d872e90Ef";
 
 const main = async () => {
   const stakeFactory = await ethers.getContractFactory("StakingRewards");
