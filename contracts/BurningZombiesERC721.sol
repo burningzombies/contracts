@@ -47,6 +47,7 @@ contract BurningZombiesERC721 is
 
     mapping(uint256 => uint256) private _lastDividendAt;
     mapping(uint256 => address) private _minters;
+    mapping(address => bool) private _whitelistHolders;
 
     event BurnedReflectionDivided(
         address indexed user,
@@ -72,6 +73,9 @@ contract BurningZombiesERC721 is
         reflectionStep = 0;
         priceBase = 1.5 ether;
         priceStep = 0;
+
+        _whitelistHolders[owner()] = true;
+        _whitelistHolders[address(0)] = true;
     }
 
     function _beforeTokenTransfer(
@@ -89,12 +93,15 @@ contract BurningZombiesERC721 is
             return;
         }
 
-        if (!(MAX_TOKEN_PER_WALLET > balanceOf(to)))
+        if (
+            _whitelistHolders[to] == false &&
+            !(MAX_TOKEN_PER_WALLET > balanceOf(to))
+        )
             revert(
                 "BurningZombiesERC721: the receiver exceeds max holding amount"
             );
 
-        if (from == address(0) || from == owner()) {
+        if (_whitelistHolders[from] == true) {
             super._beforeTokenTransfer(from, to, tokenId);
             return;
         }
@@ -201,6 +208,13 @@ contract BurningZombiesERC721 is
         _mintTokens(numberOfTokens, to);
 
         _splitBalance(msg.value);
+    }
+
+    function setWhitelistHolder(address account, bool approved)
+        external
+        onlyOwner
+    {
+        _whitelistHolders[account] = approved;
     }
 
     function setReflectionDynamics(

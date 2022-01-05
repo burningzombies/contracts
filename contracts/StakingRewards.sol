@@ -20,7 +20,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
     IERC721 public stakingToken;
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
-    uint256 public rewardsDuration = 7 days;
+    uint256 public rewardsDuration = 31556926;
     uint256 public lastUpdateTime;
     uint256 public rewardPerTokenStored;
 
@@ -92,7 +92,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         require(tokenIds.length > 0, "Cannot stake 0");
 
         for (uint256 i = 0; tokenIds.length > i; i++) {
-            stakingToken.safeTransferFrom(
+            IERC721(stakingToken).safeTransferFrom(
                 _msgSender(),
                 address(this),
                 tokenIds[i]
@@ -120,7 +120,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
                 "Only owner of the token can withdraw"
             );
 
-            stakingToken.safeTransferFrom(
+            IERC721(stakingToken).safeTransferFrom(
                 address(this),
                 _msgSender(),
                 tokenIds[i]
@@ -137,7 +137,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         uint256 reward = rewards[_msgSender()];
         if (reward > 0) {
             rewards[_msgSender()] = 0;
-            rewardsToken.safeTransfer(_msgSender(), reward);
+            IERC20(rewardsToken).safeTransfer(_msgSender(), reward);
             emit RewardPaid(_msgSender(), reward);
         }
     }
@@ -162,7 +162,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         // This keeps the reward rate in the right range, preventing overflows due to
         // very high values of rewardRate in the earned and rewardsPerToken functions;
         // Reward + leftover must be less than 2^256 / 10^18 to avoid overflow.
-        uint256 balance = rewardsToken.balanceOf(address(this));
+        uint256 balance = IERC20(rewardsToken).balanceOf(address(this));
         require(
             rewardRate <= balance.div(rewardsDuration),
             "Provided reward too high"
@@ -188,7 +188,11 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
     }
 
     function recoverERC721(uint256 tokenId) external onlyOwner {
-        stakingToken.safeTransferFrom(address(this), _msgSender(), tokenId);
+        IERC721(stakingToken).safeTransferFrom(
+            address(this),
+            _msgSender(),
+            tokenId
+        );
     }
 
     function setPeriodFinish(uint256 timestamp)

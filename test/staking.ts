@@ -31,12 +31,14 @@ describe("StakingRewards", () => {
     );
     await stakingRewards.deployed();
 
-    await stakingRewards.setRewardsDuration(604800);
-    await stakingRewards.setPeriodFinish(1654266160);
-    await rewardsToken.transfer(stakingRewards.address, reward);
-    await stakingRewards.notifyRewardAmount(reward);
+    await (await stakingRewards.setRewardsDuration(604800)).wait();
+    await (await stakingRewards.setPeriodFinish(1654266160)).wait();
+    await (await rewardsToken.transfer(stakingRewards.address, reward)).wait();
+    await (await stakingRewards.notifyRewardAmount(reward)).wait();
 
-    await stakingToken.setApprovalForAll(stakingRewards.address, true);
+    await (
+      await stakingToken.setApprovalForAll(stakingRewards.address, true)
+    ).wait();
   });
 
   it("Should be deployed", async () => {

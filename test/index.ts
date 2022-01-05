@@ -132,9 +132,7 @@ describe("Burning Zombies", function () {
   it("Should update reflection dynamics", async () => {
     await contract.setReflectionDynamics(756, 20, 0, "2000000000000000000", 0);
 
-    await contract
-      .connect(addrs[0])
-      .mint({ value: "2000000000000000000" });
+    await contract.connect(addrs[0]).mint({ value: "2000000000000000000" });
 
     expect(
       (await contract.connect(addrs[0]).currentTokenPrice()).toString()
@@ -158,8 +156,7 @@ describe("Burning Zombies", function () {
     expect(splitterBalance.toString()).to.be.equal("105000000000000000");
 
     await contract.mint({ value: "150000000000000000" });
-    await expect(contract.mint({ value: "150000000000000000" })).to.be
-      .reverted;
+    await expect(contract.mint({ value: "150000000000000000" })).to.be.reverted;
   });
 
   it("Should claim rewards", async () => {
