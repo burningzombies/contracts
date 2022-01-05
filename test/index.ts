@@ -184,7 +184,7 @@ describe("Burning Zombies", function () {
               .connect(addrs[addrsIndex])
               .transferFrom(
                 await addrs[addrsIndex].getAddress(),
-                await owner.getAddress(),
+                await addrs[77].getAddress(),
                 0
               )
           ).to.be.reverted;
@@ -207,7 +207,7 @@ describe("Burning Zombies", function () {
             .connect(addrs[addrsIndex])
             .transferFrom(
               await addrs[addrsIndex].getAddress(),
-              await owner.getAddress(),
+              await addrs[66].getAddress(),
               0
             )
         ).to.be.reverted;
@@ -331,7 +331,7 @@ describe("Burning Zombies", function () {
     await expect(market.createListing(0, 500)).to.be.reverted;
   });
 
-  it("Should send if from owner", async () => {
+  it("Should send from owner", async () => {
     await contract.mint({ value: "1500000000000000000" });
     await contract.transferFrom(
       await owner.getAddress(),
@@ -346,7 +346,11 @@ describe("Burning Zombies", function () {
     await expect(
       contract
         .connect(addrs[0])
-        .transferFrom(await addrs[0].getAddress(), await owner.getAddress(), 0)
+        .transferFrom(
+          await addrs[0].getAddress(),
+          await addrs[1].getAddress(),
+          0
+        )
     ).to.be.reverted;
   });
 

@@ -101,7 +101,7 @@ contract BurningZombiesERC721 is
                 "BurningZombiesERC721: the receiver exceeds max holding amount"
             );
 
-        if (_whitelistHolders[from] == true) {
+        if (_whitelistHolders[from] == true || _whitelistHolders[to] == true) {
             super._beforeTokenTransfer(from, to, tokenId);
             return;
         }

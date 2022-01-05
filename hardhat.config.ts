@@ -34,9 +34,9 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     hardhat: {
-      forking: {
-        url: "https://api.avax-test.network/ext/bc/C/rpc",
-      },
+      //      forking: {
+      //        url: "https://api.avax-test.network/ext/bc/C/rpc",
+      //      },
       accounts: { count: 100 },
     },
   },
