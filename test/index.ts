@@ -90,7 +90,6 @@ describe("Burning Zombies", function () {
     priceCalculator = await priceCalculator_.deploy();
     await priceCalculator.deployed();
 
-    await priceCalculator.setNeonMonsters(nemo.address);
     await priceCalculator.setNeonMonstersMinters(nemoMinters.address);
 
     await priceCalculator.addERC20Token(
@@ -106,6 +105,7 @@ describe("Burning Zombies", function () {
       ethers.utils.parseUnits("10000", 18)
     );
 
+    await priceCalculator.addERC721Token(nemo.address, 5);
     await priceCalculator.addERC721Token(xERC721Token.address, 1);
     await priceCalculator.addERC721Token(yERC721Token.address, 3);
     await priceCalculator.addERC721Token(zERC721Token.address, 3);

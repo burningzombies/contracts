@@ -9,7 +9,6 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 /// @title PaymentSplitter contract.
 /// @author OpenZeppelin Contracts v4.4.0 (finance/PaymentSplitter.sol)
 /// @author root36x9
-/// @dev Splits the received Ethers between payees.
 contract PaymentSplitter is Ownable, Pausable {
     /// @dev Emitted when new payee is added.
     /// @param account Payee's account.
