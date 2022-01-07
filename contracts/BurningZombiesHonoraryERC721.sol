@@ -21,9 +21,12 @@ contract BurningZombiesHonoraryERC721 is
 
     constructor() ERC721("Burning Zombies Honorary Ed.", "HONORARYZOMBIE") {}
 
+    /// @param to   Address for minting the token.
+    /// @param uri  The token URI.
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _tokenIdCounter.current();
         _tokenIdCounter.increment();
+
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
