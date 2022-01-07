@@ -17,12 +17,12 @@ const main = async () => {
   const token = await ethers.getContractAt("BurningZombiesERC20", REWARDS_ADDR);
   const transfer = await token.transfer(
     stake.address,
-    ethers.utils.parseUnits("12000000", 18)
+    ethers.utils.parseUnits("3000000", 18)
   );
   await transfer.wait();
 
   const update = await stake.notifyRewardAmount(
-    ethers.utils.parseUnits("12000000", 18),
+    ethers.utils.parseUnits("3000000", 18),
     { gasLimit: 6000000 }
   );
   await update.wait();

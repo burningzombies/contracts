@@ -187,14 +187,6 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         emit Recovered(tokenAddress, tokenAmount);
     }
 
-    function recoverERC721(uint256 tokenId) external onlyOwner {
-        IERC721(stakingToken).safeTransferFrom(
-            address(this),
-            _msgSender(),
-            tokenId
-        );
-    }
-
     function setPeriodFinish(uint256 timestamp)
         external
         onlyOwner
