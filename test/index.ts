@@ -123,7 +123,14 @@ describe("Burning Zombies", function () {
 
     // deploy market
     const market_ = await ethers.getContractFactory("BurningZombiesMarket");
-    market = await market_.deploy(contract.address, 3, 5, 12, await owner.getAddress(), 1);
+    market = await market_.deploy(
+      contract.address,
+      3,
+      5,
+      12,
+      await owner.getAddress(),
+      1
+    );
     await market.deployed();
 
     await contract.setReflectionDynamics(336, 30, 0, "1500000000000000000", 0);

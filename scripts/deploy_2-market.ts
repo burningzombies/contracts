@@ -8,7 +8,14 @@ const main = async () => {
   const [owner] = await ethers.getSigners();
 
   const marketFactory = await ethers.getContractFactory("BurningZombiesMarket");
-  const market = await marketFactory.deploy(MASTER_ADDR, 1, 3, 3, await owner.getAddress(), 9);
+  const market = await marketFactory.deploy(
+    MASTER_ADDR,
+    1,
+    3,
+    3,
+    await owner.getAddress(),
+    9
+  );
 
   await market.deployed();
 

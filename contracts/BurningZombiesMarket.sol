@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { Pausable } from "@openzeppelin/contracts/security/Pausable.sol";
-import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import { Address } from "@openzeppelin/contracts/utils/Address.sol";
-import { IBurningZombiesERC721 } from "./interfaces/IBurningZombiesERC721.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Pausable} from "@openzeppelin/contracts/security/Pausable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {IBurningZombiesERC721} from "./interfaces/IBurningZombiesERC721.sol";
 
 /// @title BurningZombiesMarket
 /// @author root36x9
