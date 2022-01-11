@@ -10,10 +10,15 @@ const main = async () => {
 
   const res = await pinJSONToIPFS(Artifact.abi);
 
-  const setNemoMintersTx = await calculator.setNeonMonstersMinters("");
+  const setNemoMintersTx = await calculator.setNeonMonstersMinters(
+    "0x86796ff038D063a216D92167e53bA447E9Ce3C51"
+  );
   await setNemoMintersTx.wait();
 
-  const setNemoTx = await calculator.addERC721Token("", 1);
+  const setNemoTx = await calculator.addERC721Token(
+    "0x1b72CFde16E5a33a36eAAFbf2eb9CDEd02B09577",
+    1
+  );
   await setNemoTx.wait();
 
   process.stdout.write(calculator.address + "\n");

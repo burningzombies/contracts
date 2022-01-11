@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 import Artifact from "../artifacts/contracts/BurningZombiesMarket.sol/BurningZombiesMarket.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
-const MASTER_ADDR = "";
+const MASTER_ADDR = "0x05F3Fd37b63B4C9B7BB9EFC973280F360F417309";
 
 const main = async () => {
   const [owner] = await ethers.getSigners();
