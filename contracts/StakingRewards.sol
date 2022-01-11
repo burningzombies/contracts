@@ -1,61 +1,116 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/utils/math/Math.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {SafeMath} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import {ERC721Holder} from "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 
+/// @title StakingRewards
+/// @author Pangolin
+/// @author root36x9 (ERC20 -> ERC721)
 contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
-    /* ========== STATE VARIABLES ========== */
-
+    /// @dev Rewards token address.
     IERC20 public rewardsToken;
+
+    /// @dev Staking token address.
     IERC721 public stakingToken;
+
+    /// @dev Timestamp of the period finish.
     uint256 public periodFinish = 0;
+
+    /// @dev Reward rate (increase when notifyRewardAmount called).
     uint256 public rewardRate = 0;
+
+    /// @dev Rewards duration.
     uint256 public rewardsDuration = 31556926;
+
+    /// @dev Last updated timestamp.
     uint256 public lastUpdateTime;
+
+    /// @dev Rewards per token stored.
     uint256 public rewardPerTokenStored;
 
+    /// @dev Total staked amount.
+    uint256 private _totalSupply;
+
+    /// @dev Mapping from user to paid amount per token.
     mapping(address => uint256) public userRewardPerTokenPaid;
+
+    /// @dev Mapping from user address to rewards.
     mapping(address => uint256) public rewards;
 
-    uint256 private _totalSupply;
+    /// @dev Mapping from accounts to staked amount.
     mapping(address => uint256) private _balances;
+
+    /// @dev Mapping from tokenId to accounts.
     mapping(uint256 => address) private _owners;
 
-    /* ========== CONSTRUCTOR ========== */
+    /// @dev Emitted when owner send reward tokens.
+    /// @param reward Reward amount.
+    event RewardAdded(uint256 reward);
 
+    /// @dev Emitted when user stakes tokens.
+    /// @param user Sender address.
+    /// @param tokenId Staked token.
+    event Staked(address indexed user, uint256 indexed tokenId);
+
+    /// @dev Emitted when user withdrawn the staked tokens.
+    /// @param user Sender address.
+    /// @param tokenId Withdrawn token.
+    event Withdrawn(address indexed user, uint256 indexed tokenId);
+
+    /// @dev Emitted when user claim rewards.
+    /// @param user Sender address.
+    /// @param reward Claimed amount.
+    event RewardPaid(address indexed user, uint256 reward);
+
+    /// @dev Emitted when rewards duration updated.
+    /// @param newDuration New duration.
+    event RewardsDurationUpdated(uint256 newDuration);
+
+    /// @dev Emitted when ERC20 recovered.
+    /// @param token Recovered token address,
+    /// @param amount recovered amount.
+    event Recovered(address token, uint256 amount);
+
+    /// @param _rewardsToken Rewards token address.
+    /// @param _stakingToken Staking token address.
     constructor(address _rewardsToken, address _stakingToken) {
         rewardsToken = IERC20(_rewardsToken);
         stakingToken = IERC721(_stakingToken);
     }
 
-    /* ========== VIEWS ========== */
-
+    /// @dev Getter for the staked amount.
     function totalSupply() external view returns (uint256) {
         return _totalSupply;
     }
 
+    /// @dev Getter for the staked amount by user.
+    /// @param account User address.
     function balanceOf(address account) public view returns (uint256) {
         return _balances[account];
     }
 
+    /// @dev Staked token's owner.
+    /// @param tokenId Token ID.
     function ownerOf(uint256 tokenId) public view returns (address) {
         return _owners[tokenId];
     }
 
+    /// @dev Getter for the last time reward applicable
     function lastTimeRewardApplicable() public view returns (uint256) {
         return Math.min(block.timestamp, periodFinish);
     }
 
+    /// @dev Getter for the reward per token.
     function rewardPerToken() public view returns (uint256) {
         if (_totalSupply == 0) {
             return rewardPerTokenStored;
@@ -70,6 +125,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
             );
     }
 
+    /// @dev Total earned amount for the given account.
+    /// @param account Address.
     function earned(address account) public view returns (uint256) {
         return
             _balances[account]
@@ -78,12 +135,13 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
                 .add(rewards[account]);
     }
 
+    /// @dev Get rewards for duration..
     function getRewardForDuration() external view returns (uint256) {
         return rewardRate.mul(rewardsDuration);
     }
 
-    /* ========== MUTATIVE FUNCTIONS ========== */
-
+    /// @dev Stake the tokens.
+    /// @param tokenIds Token IDs.
     function stake(uint256[] calldata tokenIds)
         external
         nonReentrant
@@ -107,6 +165,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         _balances[_msgSender()] = _balances[_msgSender()].add(tokenIds.length);
     }
 
+    /// @dev Withdraw staked tokens.
+    /// @param tokenIds Token IDs.
     function withdraw(uint256[] memory tokenIds)
         public
         nonReentrant
@@ -133,6 +193,7 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         _balances[_msgSender()] = _balances[_msgSender()].sub(tokenIds.length);
     }
 
+    /// @dev Claim tokens.
     function getReward() public nonReentrant updateReward(_msgSender()) {
         uint256 reward = rewards[_msgSender()];
         if (reward > 0) {
@@ -142,9 +203,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         }
     }
 
-    /* ========== RESTRICTED FUNCTIONS ========== */
-
-    // Always needs to update the balance of the contract when calling this method
+    /// @dev Always needs to update the balance of the contract when calling this method.
+    /// @param reward Reward amount.
     function notifyRewardAmount(uint256 reward)
         external
         onlyOwner
@@ -173,7 +233,10 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         emit RewardAdded(reward);
     }
 
-    // Added to support recovering LP Rewards from other systems such as BAL to be distributed to holders
+    /// @dev Added to support recovering LP Rewards from other systems
+    /// such as BAL to be distributed to holders
+    /// @param tokenAddress Token address.
+    /// @param tokenAmount Amount.
     function recoverERC20(address tokenAddress, uint256 tokenAmount)
         external
         onlyOwner
@@ -187,6 +250,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         emit Recovered(tokenAddress, tokenAmount);
     }
 
+    /// @dev Setter for finish the period.
+    /// @param timestamp Timestamp
     function setPeriodFinish(uint256 timestamp)
         external
         onlyOwner
@@ -195,6 +260,8 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         periodFinish = timestamp;
     }
 
+    /// @dev Setter for the rewards duration
+    /// @param _rewardsDuration Duration.
     function setRewardsDuration(uint256 _rewardsDuration) external onlyOwner {
         require(
             block.timestamp > periodFinish,
@@ -205,8 +272,6 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         emit RewardsDurationUpdated(rewardsDuration);
     }
 
-    /* ========== MODIFIERS ========== */
-
     modifier updateReward(address account) {
         rewardPerTokenStored = rewardPerToken();
         lastUpdateTime = lastTimeRewardApplicable();
@@ -216,13 +281,4 @@ contract StakingRewards is ReentrancyGuard, Ownable, ERC721Holder {
         }
         _;
     }
-
-    /* ========== EVENTS ========== */
-
-    event RewardAdded(uint256 reward);
-    event Staked(address indexed user, uint256 indexed tokenId);
-    event Withdrawn(address indexed user, uint256 indexed tokenId);
-    event RewardPaid(address indexed user, uint256 reward);
-    event RewardsDurationUpdated(uint256 newDuration);
-    event Recovered(address token, uint256 amount);
 }

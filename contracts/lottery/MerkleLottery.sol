@@ -3,10 +3,11 @@ pragma solidity ^0.8.0;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
-/// @title OneLottery contract.
+/// @title MerkleLottery contract.
 /// @author root36x9
-contract OneLottery is Ownable {
+contract MerkleLottery is Ownable {
     /// @dev Participants
     address payable[] private _participants;
 
@@ -22,6 +23,9 @@ contract OneLottery is Ownable {
     /// @dev Max ticket limit per transaction
     uint256 public constant MAX_TICKET_PER_TX = 30;
 
+    /// @dev Merkle root.
+    bytes32 public immutable merkleRoot;
+
     /// @dev Represents the lottery status
     enum State {
         OPEN, // Lottery started
@@ -34,23 +38,19 @@ contract OneLottery is Ownable {
     /// @dev Mapping from participant to ticket count
     mapping(address => uint256) public tickets;
 
-    /// @notice Emitted when winner is picked.
+    /// @dev Emitted when winner is picked.
     event Winner(address indexed winner);
 
     /// @dev Initializes the contract.
     /// @param fee_ The lottery ticket fee.
-    constructor(uint256 fee_) {
+    /// @param merkleRoot_ Merkle root.
+    constructor(uint256 fee_, bytes32 merkleRoot_) {
         _fee = fee_;
         lotteryState = State.CLOSED;
+        merkleRoot = merkleRoot_;
     }
 
     /// @dev Starts the lottery.
-    ///
-    /// Requirements:
-    ///
-    /// - Only owner can start the lottery.
-    /// - `lotteryState` must be `State.OPEN`.
-    /// - Ether value sent is must higher than 1 ether.
     function start() public payable onlyOwner {
         require(
             lotteryState == State.CLOSED,
@@ -66,27 +66,24 @@ contract OneLottery is Ownable {
     }
 
     /// @dev Participate in the lottery.
-    ///
-    /// Requirements:
-    ///
-    /// - `numberOfTickets` must be equal or lower than the max ticket purchase limit.
-    /// - `lotteryState` must be `State.OPEN`.
-    /// - `numberOfTickets` must be higher than zero.
-    /// - Caller must be wallet address.
-    /// - Ether value sent is must be equal or higher than the fees.
-    ///
     /// @param numberOfTickets The ticket number.
-    function participate(uint256 numberOfTickets) external payable {
-        require(
-            numberOfTickets <= MAX_TICKET_PER_TX,
-            "Lottery: maximum ticket purchase exceeds"
-        );
+    /// @param merkleProof Proof.
+    function participate(
+        uint256 numberOfTickets,
+        bytes32[] calldata merkleProof
+    ) external payable {
         require(
             lotteryState == State.OPEN,
             "Lottery: lottery state is not open"
         );
         require(numberOfTickets > 0, "Lottery: zero ticket");
         require(!Address.isContract(_msgSender()), "Lottery: conract call");
+
+        bytes32 leaf = keccak256(
+            abi.encodePacked(_msgSender(), numberOfTickets)
+        );
+        bool valid = MerkleProof.verify(merkleProof, merkleRoot, leaf);
+        require(valid, "Lottery: Valid proof required.");
 
         uint256 amountTopay = numberOfTickets * _fee;
 
@@ -101,13 +98,7 @@ contract OneLottery is Ownable {
     }
 
     /// @dev Finalize the lottery, and destroy the contract.
-    ///
     /// @param seed The seed to create random number.
-    ///
-    /// Requirements:
-    ///
-    /// - `lotteryState` must be `State.OPEN`.
-    /// - `_participants.length` must be greater than zero.
     function finalize(uint256 seed) public onlyOwner {
         require(
             lotteryState == State.OPEN,
@@ -141,6 +132,7 @@ contract OneLottery is Ownable {
     }
 
     /// @dev Generate random number, based on the given seed number.
+    /// @param seed Seed.
     /// @return Random number.
     function _psuedoRandom(uint256 seed) private view returns (uint256) {
         return
