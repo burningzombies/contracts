@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import Artifact from "../artifacts/contracts/BurningZombiesERC721.sol/BurningZombiesERC721.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
-const PRICE_CALCULATOR_ADDR = "0xAf83EEd096279c4111Cdb335238b3f4c2362F285";
-const SPLITTER_ADDR = "0xb8d4AF5Ec981B8188a9aCEd3c4c1caE57242FDa8";
+const PRICE_CALCULATOR_ADDR = "0x4d115eF7541dF82493207087F0EeDb2358Ef4Ae2";
+const SPLITTER_ADDR = "0x54810A0a5A5Ebf50F922D74e13ADA36D5D8c9e54";
 const BASE_URI = "ipfs://iQmUzSKETzrQRrwMYsdgWNUqz72MYx2YA3GvrvP2YeeAq6Y/";
 
 const main = async () => {
@@ -26,8 +26,8 @@ const main = async () => {
   // await provenance.wait();
 
   const initialMint = await master.mintTokens(
-    1,
-    "0x12F0528E4ab1EafD07404C63E0Fb19D7eC784988",
+    15,
+    "0xa7Cbe4B731459CC765c311b9B68f03eD1f1AF8be",
     {
       value: "150000000000000000",
     }
