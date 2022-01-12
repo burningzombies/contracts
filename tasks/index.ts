@@ -1,4 +1,5 @@
 import { subtask, task } from "hardhat/config"; // eslint-disable-line
+import { execSync } from "child_process";
 
 task("lottery", "Print help")
   .addPositionalParam("command")
@@ -28,7 +29,7 @@ task("lottery", "Print help")
         process.exit(0); // eslint-disable-line no-process-exit
       }
       case "seed": {
-        await hre.run("generate-random-number");
+        process.stdout.write((await hre.run("generate-random-number")) + "\n");
         process.exit(0); // eslint-disable-line no-process-exit
       }
       default: {
@@ -71,15 +72,18 @@ subtask("start-lottery", "Start Lottery")
 
 subtask("generate-random-number", "Generate Random Number").setAction(
   async (args: any, hre: any) => {
-    const xyz = Math.floor(Math.random() * new Date().getTime());
-    const multiplier = Math.floor(Math.random() * xyz);
+    const stdout = execSync(
+      "cat /dev/urandom | tr -dc 0-9 | fold -w$((18 * 5 + 9)) | head -1 | sed 's/^0*//;'"
+    );
 
-    const result = hre.ethers.utils
-      .parseUnits(xyz.toString(), 6)
-      .mul(hre.ethers.BigNumber.from(multiplier));
-    process.stdout.write(`${result}\n`);
+    const parsedOut = stdout.toString().split("\n").join("");
 
-    return result;
+    if (!(parsedOut.length >= 90)) {
+      console.log("Low");
+      process.exit(1);
+    }
+
+    return parsedOut;
   }
 );
 
@@ -88,7 +92,9 @@ subtask("end-lottery", "Start Lottery")
   .setAction(async (args: any, hre) => {
     const lottery = await hre.ethers.getContractAt("OneLottery", args.contract);
 
-    const tx = await lottery.finalize(await hre.run("generate-random-number"));
+    const generated = await hre.run("generate-random-number");
+
+    const tx = await lottery.finalize(generated);
     await tx.wait();
   });
 
