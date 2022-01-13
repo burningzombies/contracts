@@ -3,8 +3,6 @@ import Artifact from "../artifacts/contracts/PaymentSplitter.sol/PaymentSplitter
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
 const main = async () => {
-  const [owner] = await ethers.getSigners();
-
   const splitterFactory = await ethers.getContractFactory("PaymentSplitter");
   const splitter = await splitterFactory.deploy(
     [

@@ -80,7 +80,7 @@ subtask("generate-random-number", "Generate Random Number").setAction(
 
     if (!(parsedOut.length >= 50)) {
       console.log("Low");
-      process.exit(1);
+      process.exit(1); // eslint-disable-line no-process-exit
     }
 
     return parsedOut;

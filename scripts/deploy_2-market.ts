@@ -5,8 +5,6 @@ import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-
 const MASTER_ADDR = "0x8B301E92Ed8565786F467c9D4655C8711c26AAfa";
 
 const main = async () => {
-  const [owner] = await ethers.getSigners();
-
   const marketFactory = await ethers.getContractFactory("BurningZombiesMarket");
   const market = await marketFactory.deploy(
     MASTER_ADDR,
