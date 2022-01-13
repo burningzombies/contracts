@@ -73,12 +73,12 @@ subtask("start-lottery", "Start Lottery")
 subtask("generate-random-number", "Generate Random Number").setAction(
   async (args: any, hre: any) => {
     const stdout = execSync(
-      "cat /dev/urandom | tr -dc 0-9 | fold -w$((18 * 5 + 9)) | head -1 | sed 's/^0*//;'"
+      "cat /dev/urandom | tr -dc 0-9 | fold -w$((18 * 3)) | head -1 | sed 's/^0*//;'"
     );
 
     const parsedOut = stdout.toString().split("\n").join("");
 
-    if (!(parsedOut.length >= 90)) {
+    if (!(parsedOut.length >= 50)) {
       console.log("Low");
       process.exit(1);
     }

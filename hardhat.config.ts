@@ -12,11 +12,11 @@ dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.0",
+    version: "0.8.9",
     settings: {
       optimizer: {
         enabled: true,
-        runs: 1000,
+        runs: 200,
       },
     },
   },
@@ -31,9 +31,7 @@ const config: HardhatUserConfig = {
       url: "https://api.avax.network/ext/bc/C/rpc",
       chainId: 43114,
       accounts:
-        process.env.PRIVATE_KEY_MAIN !== undefined
-          ? [process.env.PRIVATE_KEY_MAIN]
-          : [],
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     hardhat: {
       //      forking: {

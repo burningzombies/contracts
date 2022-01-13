@@ -2,8 +2,8 @@ import { ethers } from "hardhat";
 import Artifact from "../artifacts/contracts/BurningZombiesERC721.sol/BurningZombiesERC721.json";
 import { pinJSONToIPFS } from "./utils"; // eslint-disable-line node/no-missing-import
 
-const PRICE_CALCULATOR_ADDR = "0x4d115eF7541dF82493207087F0EeDb2358Ef4Ae2";
-const SPLITTER_ADDR = "0x54810A0a5A5Ebf50F922D74e13ADA36D5D8c9e54";
+const PRICE_CALCULATOR_ADDR = "0x149f78Ad023f8153750995e47000f4a8b445F2Ad";
+const SPLITTER_ADDR = "0x19BD1dD6A19211E9D0Ed991B25a7ed4dCCA52b45";
 const BASE_URI = "ipfs://iQmUzSKETzrQRrwMYsdgWNUqz72MYx2YA3GvrvP2YeeAq6Y/";
 
 const main = async () => {
@@ -16,6 +16,7 @@ const main = async () => {
   );
 
   await master.deployed();
+  console.log(master.address);
 
   const priceTx = await master.setPriceCalculator(PRICE_CALCULATOR_ADDR);
   await priceTx.wait();

@@ -8,6 +8,7 @@ async function main() {
   const _ = await ethers.getContractFactory("BurningZombiesHonoraryERC721");
   const honorary = await _.deploy();
   await honorary.deployed();
+  console.log(honorary.address);
 
   const honoraryABIResponse = await pinJSONToIPFS(
     BurningZombiesHonoraryERC721.abi

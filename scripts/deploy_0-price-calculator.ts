@@ -7,6 +7,7 @@ const main = async () => {
   const calculator = await calculatorFactory.deploy();
 
   await calculator.deployed();
+  process.stdout.write(calculator.address + "\n");
 
   const res = await pinJSONToIPFS(Artifact.abi);
 
