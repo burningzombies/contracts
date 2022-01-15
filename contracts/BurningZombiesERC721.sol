@@ -109,9 +109,9 @@ contract BurningZombiesERC721 is
         saleDuration = duration;
 
         segmentSize = 336;
-        reflectionBase = 30;
+        reflectionBase = 15;
         reflectionStep = 0;
-        priceBase = 1.5 ether;
+        priceBase = 2 ether;
         priceStep = 0;
 
         _whitelistHolders[owner()] = true;
@@ -280,11 +280,6 @@ contract BurningZombiesERC721 is
         uint256 priceBase_,
         uint256 priceStep_
     ) public onlyOwner {
-        require(
-            _tokenIdCounter.current() == 0,
-            "BurningZombiesERC721: first token already minted"
-        );
-
         segmentSize = segmentSize_;
         reflectionBase = reflectionBase_;
         reflectionStep = reflectionStep_;
