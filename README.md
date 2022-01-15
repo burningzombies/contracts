@@ -13,6 +13,9 @@ npm run test                  # Run hardhat test
 npx hardhat                   # Compile solidity
 ```
 
+## TXs
+- Renounce Ownership for $BURN https://snowtrace.io/tx/0x96793db72b1a42e18cb49d3c60403f193f0a568d63b8cac02d9181aa1ad5e309
+
 ## Deployed Contracts
 
 - BurningZombiesHonoraryERC721 `0xa9EDaf66c717808A30dfDEaf2490e3147a145fb5`
