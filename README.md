@@ -15,7 +15,7 @@ npx hardhat                   # Compile solidity
 
 ## Deployed Contracts
 
-- BurningZombiesHonoraryERC721 `0x1B64380C5585DF25e784F08594D65b980A5489F0`
+- BurningZombiesHonoraryERC721 `0xa9EDaf66c717808A30dfDEaf2490e3147a145fb5`
 - PriceCalculator `0x149f78Ad023f8153750995e47000f4a8b445F2Ad`
 - PaymentSplitter `0x19BD1dD6A19211E9D0Ed991B25a7ed4dCCA52b45`
 - BurningZombiesERC721 `0x8B301E92Ed8565786F467c9D4655C8711c26AAfa`
